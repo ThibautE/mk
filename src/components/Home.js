@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { styled } from '@mui/system';
 import { useQuery } from 'react-query'
-import { getAllCreative } from "../api/ressources/creativesRessource";
+import { getAllCreative, updateCreative } from "../api/ressources/creativesRessource";
 import { Chip, Button } from "@mui/material";
 import SwitchUnstyled, { switchUnstyledClasses } from '@mui/core/SwitchUnstyled';
+import CreativeComp from "./Creative";
+import { PaginationUI } from "../ui_components";
 
-const HomeDiv = styled('div')`
+const CreativeListDiv = styled('div')`
     border: 2px solid #242424;
     width: 80%;
     margin-top: 2%;
@@ -16,6 +18,10 @@ const ButtonDiv = styled(Button)`
     width: 100%;
     height: 60px;
     justify-content: space-between;
+
+    &:hover {
+        background-color: #fff;
+    }
 `;
 
 const Creative  = styled('div')`
@@ -40,7 +46,7 @@ const Contributor = styled(Chip)`
     width: 32px;
     height: 32px;
     & > span {
-        padding: 0 !important;
+        padding: 0;
     }
 `;
 
@@ -49,7 +55,11 @@ const Format = styled(Chip)`
     margin-left: 5px;
     border: none;
     border-radius: 99px;
+    height: 26px;
     font-size: 12px;
+    & > span {
+        padding: 1px 10px 0 10px;
+    }
 `;
 
 const Enable = styled('span')`
@@ -107,47 +117,58 @@ const Enable = styled('span')`
     }
 `;
 
-
-// /creatives?_page=:page&_limit=:limit
-
 const Home = () => {
 
+    const [checked, setChecked] = useState(true);
     const [page, setPage] = useState(1);
-
-    const { data, status } = useQuery(['posts1'], () => getAllCreative(1, 5)) 
+    const [creativeSelected, setCreativeSelected] = useState();
+    const { data, status } = useQuery(['posts1', { page }], () => getAllCreative(page, 5), {
+        keepPreviousData: true
+    })
 
     console.log('creatives', data, status);
+
+    const displayCreative = (creative) => {
+        setCreativeSelected(creative);
+        console.log(creative);
+    }
+
+    const changeEnabled = (creative) => updateCreative(creative.id, {...creative, enabled: !creative.enabled});
 
     if (status === "loading") {
         return (<div>WAIT</div>)
     }
 
     return (
-        <div style={{display: 'flex', justifyContent: 'center'}}>
-        <HomeDiv>
+        <div style={{display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
+        <CreativeListDiv>
             {
                 data.map((d, index) => 
                     <Creative>
-                        <ButtonDiv key={index}>
+                        <ButtonDiv key={index} onClick={() => displayCreative(d)}>
                             <Title>{d.title}</Title>
                             <div style={{flex: 1}}>
                                 { d.contributors.map((creator, index) => 
                                     <Contributor label={`${creator.firstName[0]}${creator.lastName[0]}`} key={`creator-${index}`} />
                                 )}
                             </div>
-                            <div style={{flex: 1}}>
+                            <div style={{flex: 2}}>
                             { d.formats.map((format, index) => 
                                     <Format label={`${format.width}x${format.height}`} key={`format-${index}`} />
                                 )}
                             </div>
                         </ButtonDiv>
                         <div>
-                            <SwitchUnstyled component={Enable} defaultChecked />
+                            <SwitchUnstyled checked={d.enabled} component={Enable} onChange={() => changeEnabled(d)} />
                         </div>
                     </Creative>
                 )
             }
-        </HomeDiv>
+        </CreativeListDiv>
+        <PaginationUI page={page} setPage={setPage} />
+        { creativeSelected &&
+        <CreativeComp creative={creativeSelected} />
+        }
         </div>
       );
 }

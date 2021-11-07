@@ -37,12 +37,11 @@ export async function createCreative(){
 /**
  * update a creative
  * @param uuid, the id of the creative
+ * @param info, the id of the creative
  * @returns {Promise<*>}, The creative object if successfully updated, an error else
  */
-export async function updateCreative(uuid: string){
-    const { data } = await api.putRequest(`/creatives/${uuid}`);
-    return data
-}
+ export const updateCreative = (uuid: string, bodyData: any) => api.putRequest(`/creatives/${uuid}`, bodyData).then(res => console.log(res)
+ );
 
 /**
  * Delete a creative
