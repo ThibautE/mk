@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { styled } from '@mui/system';
-import { Button, Skeleton } from "@mui/material";
+import { Skeleton } from "@mui/material";
+import { Link } from "react-router-dom";
+import { ButtonUI } from "../../../ui_components";
 
 const CreativeDiv = styled('div')`
     display: flex;
@@ -9,9 +11,13 @@ const CreativeDiv = styled('div')`
     border: 2px solid #242424;
     width: 80%;
     margin-top: 2%;
+    @media (max-width: 768px) {
+        flex-direction: column;
+    }
 `;
 
 const Contributors = styled('div')`
+    margin-top: 20px;
     border: none;
     background-color: #f1f5fa;
 `;
@@ -46,20 +52,21 @@ const CreativeComp = ({creative}) => {
         <CreativeDiv>
             <LeftPanel>
                 <Title>{creative.title}</Title>
-                <div>{creative.description}</div>
+                <p>{creative.description}</p>
+                <p>{creative.content}</p>
                 <CustomSkeleton animation={false} />
                 <CustomSkeleton animation={false} />
                 <CustomSkeleton width="80%" animation={false} />
             </LeftPanel>
             <RightPanel>
                 <div>Créé par {creative.createdBy.firstName + ' ' + creative.createdBy.lastName}</div>
-                <div>Dernière modification le {creative.lastModified}</div>
+                <div style={{marginTop: 20}}>Dernière modification le {creative.lastModified}</div>
                 <Contributors>{creative.contributors?.map((creator, index) => 
                     <Contributor key={`creative-${index}`}>
                         {creator.firstName + ' ' + creator.lastName}
                     </Contributor>)}
                 </Contributors>
-                <Button>Modifier</Button>
+                <ButtonUI fill component={Link} to={`/creative/${creative.id}`} style={{width: '100%', marginTop: 20}}>Modifier</ButtonUI>
             </RightPanel>
         </CreativeDiv>
       );

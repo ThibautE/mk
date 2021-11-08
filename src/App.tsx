@@ -1,26 +1,18 @@
-import Home from "./components/Home";
+import Home from "./components/HomePage";
 import { QueryClient, QueryClientProvider } from 'react-query'
-import { BrowserRouter } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
+import CreativePage from "./components/CreativePage";
 
  const queryClient = new QueryClient()
 
 function App() {
   return (
-    <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <header
-			style={{
-				marginTop: 10,
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
-			}}
-        >
-          <img src="/mediakeys.png" width="80" alt="logo" />
-        </header>
-        <Home />
-      </QueryClientProvider>
-    </BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+		<Routes>
+			<Route path="/" element={<Home />} />
+			<Route path="/creative/:creativeId" element={<CreativePage />} />
+		</Routes>
+    </QueryClientProvider>
   );
 }
 

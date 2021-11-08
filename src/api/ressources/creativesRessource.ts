@@ -20,17 +20,8 @@ export async function getAllCreative(page?: number, limit?: number) {
  * @param uuid, the id of the creative
  * @returns {Promise<*>}, the creative needed
  */
-export async function getCreative(uuid: string){
+export async function getCreativeById(uuid: string){
     const { data } = await api.getRequest(`/creatives/${uuid}`);
-    return data
-}
-
-/**
- * Create a creative
- * @returns {Promise<*>}, the creative object created if successfully added, an error else
- */
-export async function createCreative(){
-    const { data } = await api.postRequest(`/creatives/`);
     return data
 }
 
